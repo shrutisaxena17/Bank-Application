@@ -1,0 +1,290 @@
+openapi: 3.0.0
+info:
+  title: Account API
+  description: API for managing bank accounts
+  version: 1.0.0
+paths:
+  /account:
+    get:
+      summary: Get all accounts
+      description: Retrieve a list of all accounts
+      responses:
+        '200':
+          description: A list of accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+    post:
+      summary: Create a new account
+      description: Create a new bank account by providing account details.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+            examples:
+              example1:
+                summary: Example of an account creation request
+                value:
+                  accountId: 10
+                  customerUniqueId: "JAKSINGFQJR"
+                  accountNumber: "0987043775"
+                  accountBalance: 5400.00
+                  accountType: "Savings"
+                  currency: "RS"
+                  status: "Active"
+                  createdDate: "2024-11-06T17:20:26"
+                  lastUpdated: "2024-11-08T17:20:48"
+      responses:
+        '200':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+
+  /account/{accountNumber}:
+    get:
+      summary: Find account by account number
+      description: Retrieve account details using the account number.
+      parameters:
+        - name: accountNumber
+          in: path
+          required: true
+          description: The account number to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Account details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+              examples:
+                example1:
+                  summary: Example of account details
+                  value:
+                    accountId: 10
+                    customerUniqueId: "JAKSINGFQJR"
+                    accountNumber: "0987043775"
+                    accountBalance: 5400.00
+                    accountType: "Savings"
+                    currency: "RS"
+                    status: "Active"
+                    createdDate: "2024-11-06T17:20:26"
+                    lastUpdated: "2024-11-08T17:20:48"
+        '404':
+          description: Account not found
+
+    put:
+      summary: Update an existing account
+      description: Update the details of an existing account.
+      parameters:
+        - name: accountNumber
+          in: path
+          required: true
+          description: The account number to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+            examples:
+              example1:
+                summary: Example of an updated account request
+                value:
+                  accountId: 10
+                  customerUniqueId: "JAKSINGFQJR"
+                  accountNumber: "0987043775"
+                  accountBalance: 6000.00
+                  accountType: "Savings"
+                  currency: "RS"
+                  status: "Active"
+                  createdDate: "2024-11-06T17:20:26"
+                  lastUpdated: "2024-11-08T17:20:48"
+      responses:
+        '200':
+          description: Account updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          description: Account not found
+
+    delete:
+      summary: Delete an account by account number
+      description: Remove an account using its account number.
+      parameters:
+        - name: accountNumber
+          in: path
+          required: true
+          description: The account number to delete.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Account deleted successfully
+
+  /account/{accountNumber}/balance:
+    get:
+      summary: Get balance by account number
+      description: Retrieve the balance of an account using its account number.
+      parameters:
+        - name: accountNumber
+          in: path
+          required: true
+          description: The account number to check balance for.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Balance retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: number
+
+  /account/{accountNumber}/deposit:
+    post:
+      summary: Deposit money into an account
+      description: Deposit a specified amount into the given account.
+      parameters:
+        - name: accountNumber
+          in: path
+          required: true
+          description: The account number to deposit into.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  format: double
+            examples:
+              example1:
+                summary: Example deposit request
+                value:
+                  amount: 1000.00
+      responses:
+        '200':
+          description: Deposit successful
+
+  /account/{accountNumber}/withdraw:
+    post:
+      summary: Withdraw money from an account
+      description: Withdraw a specified amount from the given account.
+      parameters:
+        - name: accountNumber
+          in: path
+          required: true
+          description: The account number to withdraw from.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  format: double
+            examples:
+              example1:
+                summary: Example withdrawal request
+                value:
+                  amount: 500.00
+      responses:
+        '200':
+          description: Withdrawal successful
+
+  /account/transfer:
+    post:
+      summary: Transfer money between accounts
+      description: Transfer a specified amount from one account to another.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                senderAccountNumber:
+                  type: string
+                receiverAccountNumber:
+                  type: string
+                amount:
+                  type: number
+                  format: double
+            examples:
+              example1:
+                summary: Example transfer request
+                value:
+                  senderAccountNumber: "0987043775"
+                  receiverAccountNumber: "0987043776"
+                  amount: 1500.00
+      responses:
+        '200':
+          description: Transfer successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  transactionId:
+                    type: string
+        '400':
+          description: Invalid request
+        '404':
+          description: Account not found
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        accountId:
+          type: integer
+        customerUniqueId:
+          type: string
+        accountNumber:
+          type: string
+        accountBalance:
+          type: number
+          format: double
+        accountType:
+          type: string
+        currency:
+          type: string
+        status:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        lastUpdated:
+          type: string
+          format: date-time
+
+    AccountResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string

@@ -6,17 +6,14 @@ import com.example.BankApplication.response.AccountResponse;
 import com.example.BankApplication.security.JwtService;
 import com.example.BankApplication.service.AccountService;
 import com.example.BankApplication.service.BankService;
-import io.jsonwebtoken.Claims;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-
-import static org.springframework.security.authorization.AuthorityReactiveAuthorizationManager.hasAuthority;
 
 @RestController
 @RequestMapping("/account")
@@ -40,7 +37,7 @@ public class AccountController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+   @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<AccountResponse> newAccount(@RequestBody Account account) {
         String accountNumber = accountService.createAccount(account);
         AccountResponse accountResponse = new AccountResponse("This is your Account Number", accountNumber);
@@ -74,7 +71,7 @@ public class AccountController {
 
 
     @PostMapping("/{accountNumber}/deposit")
-    //@PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<String> deposit(@PathVariable String accountNumber, @RequestParam BigDecimal amount) throws NotFoundException {
         bankService.depositMoney(accountNumber, amount);
         return ResponseEntity.ok("Deposit successful. New balance: " + accountService.getBalance(accountNumber));
@@ -82,7 +79,7 @@ public class AccountController {
     
 
     @PostMapping("/{accountNumber}/withdraw")
-    //@PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<String> withdraw(@PathVariable String accountNumber, @RequestParam BigDecimal amount) throws NotFoundException {
         bankService.withdrawMoney(accountNumber, amount);
         return ResponseEntity.ok("Withdrawal successful. New balance: " + accountService.getBalance(accountNumber));
@@ -90,7 +87,7 @@ public class AccountController {
 
 
     @PostMapping("/transfer")
-    //@PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     public ResponseEntity<String> transfer(@RequestParam String senderAccountNumber,
                                            @RequestParam String receiverAccountNumber,
                                            @RequestParam BigDecimal amount) throws NotFoundException {

@@ -1,5 +1,11 @@
 package com.example.BankApplication.config;
 
+import com.example.BankApplication.model.Address;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +20,10 @@ import java.util.Properties;
 @Configuration
 @ComponentScan(basePackages = "org.example")
 public class AppConfig {
+
+    @Value("${app.name}")
+    private String appName;
+
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -45,4 +55,31 @@ public class AppConfig {
 
         return mailSender;
     }
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        Address address = new Address();
+        address.setStreet("B-64 DLF Colony");
+        address.setCity("Ghaziabad");
+        address.setState("UP");
+        address.setPincode("201005");
+        address.setCountry("India");
+        address.setCustomerUniqueId("SHRSAXBAJPC");
+        address.setManagerId(null);
+
+
+        Example addressExample = new Example().value(address);
+
+
+        return new OpenAPI()
+                .components(new Components().addExamples("AddressExample", addressExample))
+                .info(new Info().title("Bank API")
+                        .version("1.0")
+                        .description("API for managing bank addresses"));
+    }
+
+    public void print(){
+        System.out.println("Application Name:"+appName);
+    }
+
 }

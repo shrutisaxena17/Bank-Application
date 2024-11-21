@@ -10,8 +10,6 @@ public class Address {
     private String customerUniqueId;
     private Integer managerId;
 
-
-
     public int getId() {
         return id;
     }

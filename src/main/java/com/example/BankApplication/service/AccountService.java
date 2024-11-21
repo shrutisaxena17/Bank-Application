@@ -4,7 +4,6 @@ import com.example.BankApplication.dao.AccountDAO;
 import com.example.BankApplication.exception.MinimumBalanceException;
 import com.example.BankApplication.exception.NotFoundException;
 import com.example.BankApplication.model.Account;
-import com.example.BankApplication.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
